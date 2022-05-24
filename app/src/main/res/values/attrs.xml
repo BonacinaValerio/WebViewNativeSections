@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WebViewZoomable">
+        <attr name="header_view" format="reference" />
+        <attr name="footer_view" format="reference" />
+        <attr name="follow_zoom_scale" format="boolean" />
+    </declare-styleable>
+
+</resources>
