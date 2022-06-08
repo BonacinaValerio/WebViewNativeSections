@@ -18,6 +18,9 @@ import timber.log.Timber
 import kotlin.math.absoluteValue
 import kotlin.properties.Delegates
 
+import android.view.MotionEvent
+
+
 class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener {
 
     private var lastScale = 0f
@@ -30,6 +33,8 @@ class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener 
     private var awaitHeaderPost: Runnable? = null
 
     private var followZoomScale: Boolean = false
+
+    private val internalViewsTouchListener: MutableMap<Int, WebViewTouchListener> = mutableMapOf()
 
     internal abstract class ViewHeightListener : OnLayoutChangeListener {
         abstract fun onNewHeight(newHeight: Int)
@@ -369,6 +374,12 @@ class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener 
         return mFooter?.height ?: 0
     }
 
+    fun addInternalViewTouchListener(viewIds: List<Int>, listener: WebViewTouchListener) {
+        viewIds.forEach {
+            internalViewsTouchListener[it] = listener
+        }
+    }
+
     private var startEvent: MotionEvent? = null
     private var lastRequestDisallow: Boolean? = null
 
@@ -384,6 +395,18 @@ class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener 
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        handleMotionEvent(event)
+
+        internalViewsTouchListener.forEach {
+            findViewById<View>(it.key)?.let { view ->
+                it.value.onTouchEvent(view, event)
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
+
+    private fun handleMotionEvent(event: MotionEvent) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 obtainScrollParameters(event)
@@ -428,7 +451,6 @@ class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener 
                 }
             }
         }
-        return super.onTouchEvent(event)
     }
 
     override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {

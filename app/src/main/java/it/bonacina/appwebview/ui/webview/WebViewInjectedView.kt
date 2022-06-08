@@ -1,8 +1,10 @@
 package it.bonacina.appwebview.ui.webview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -19,6 +21,10 @@ class WebViewInjectedView : RelativeLayout {
         attrs,
         defStyleAttr
     )
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return true
+    }
 
     fun calculateCorrectHeaderHeight() {
         val setCorrectHeightRunnable = Runnable {
@@ -49,8 +55,7 @@ class WebViewInjectedView : RelativeLayout {
                     layoutParams = lp
                     requestLayout()
                 }
-            } catch (ignored: Exception) {
-            }
+            } catch (ignored: Exception) { }
         }
         try {
             post(forceCorrectHeightRunnable)

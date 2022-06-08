@@ -1,17 +1,17 @@
 package it.bonacina.appwebview.ui.webviewfragment
 
+import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.TouchDelegate
-import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
 import it.bonacina.appwebview.R
 import it.bonacina.appwebview.databinding.FragmentWebViewZoomBinding
 import it.bonacina.appwebview.databinding.WebviewHeaderBinding
+import it.bonacina.appwebview.ui.webview.DefaultWebViewTouchListener
 import it.bonacina.appwebview.ui.webview.WebViewZoomableClient
 import org.jsoup.Jsoup
 
@@ -46,16 +46,17 @@ class WebViewZoomFragment : Fragment() {
             }
         }
 
+        binding.myWebviewZoomable.addInternalViewTouchListener(
+            listOf(R.id.button),
+            DefaultWebViewTouchListener()
+        )
+
         binding.myWebviewZoomable.getHeaderInternalView()?.let { view ->
             val mHeader = WebviewHeaderBinding.bind(view)
             mHeader.button.setOnClickListener {
                 binding.myWebviewZoomable.toggleHideContent {
 
                 }
-            }
-            mHeader.button.setOnTouchListener { view, motionEvent ->
-                binding.myWebviewZoomable.onTouchEvent(event = motionEvent)
-                return@setOnTouchListener false
             }
         }
 
