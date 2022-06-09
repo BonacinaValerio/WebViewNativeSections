@@ -374,10 +374,14 @@ class WebViewZoomable: WebView, ZoomStatusListener, View.OnLayoutChangeListener 
         return mFooter?.height ?: 0
     }
 
-    fun addInternalViewTouchListener(viewIds: List<Int>, listener: WebViewTouchListener) {
-        viewIds.forEach {
-            internalViewsTouchListener[it] = listener
+    fun addInternalViewTouchListener(viewsAndListeners: List<Pair<Int, WebViewTouchListener>>) {
+        viewsAndListeners.forEach {
+            internalViewsTouchListener[it.first] = it.second
         }
+    }
+
+    fun addInternalViewTouchListener(viewId: Int, listener: WebViewTouchListener) {
+        internalViewsTouchListener[viewId] = listener
     }
 
     private var startEvent: MotionEvent? = null

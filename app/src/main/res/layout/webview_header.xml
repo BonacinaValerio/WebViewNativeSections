@@ -25,18 +25,17 @@
             android:textSize="20sp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/imageButton"
+            android:id="@+id/btn_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="-10dp"
             android:layout_weight="0"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:minWidth="0dip"
             android:minHeight="0dip"
-            android:paddingLeft="20dp"
+            android:padding="20dp"
             android:paddingTop="20dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="20dp"
             android:selectAllOnFocus="true"
             android:stateListAnimator="@null"
             app:backgroundTint="@android:color/transparent"

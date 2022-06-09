@@ -47,8 +47,10 @@ class WebViewZoomFragment : Fragment() {
         }
 
         binding.myWebviewZoomable.addInternalViewTouchListener(
-            listOf(R.id.button),
-            DefaultWebViewTouchListener()
+            listOf(
+                Pair(R.id.button, DefaultWebViewTouchListener()),
+                Pair(R.id.btn_favorite, DefaultWebViewTouchListener())
+            )
         )
 
         binding.myWebviewZoomable.getHeaderInternalView()?.let { view ->
