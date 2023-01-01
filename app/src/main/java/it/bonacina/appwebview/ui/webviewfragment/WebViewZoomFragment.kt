@@ -1,19 +1,14 @@
 package it.bonacina.appwebview.ui.webviewfragment
 
-import android.annotation.SuppressLint
-import android.graphics.Rect
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
 import it.bonacina.appwebview.R
 import it.bonacina.appwebview.databinding.FragmentWebViewZoomBinding
 import it.bonacina.appwebview.databinding.WebviewHeaderBinding
-import it.bonacina.appwebview.ui.webview.DefaultWebViewTouchListener
-import it.bonacina.appwebview.ui.webview.WebViewZoomableClient
-import org.jsoup.Jsoup
+import it.bonacina.appwebview.databinding.WebviewSmallFooterBinding
+import it.bonacina.appwebview.ui.webview.*
 
 class WebViewZoomFragment : Fragment() {
     private var currentUrl: String? = null
@@ -37,32 +32,111 @@ class WebViewZoomFragment : Fragment() {
         currentUrl?.let { url ->
             viewModel.getHtmlFromUrl(url)
 
-            viewModel.webViewHtml.observe(viewLifecycleOwner) { html ->
+            viewModel.webViewHtml.observe(viewLifecycleOwner) { webViewSections ->
                 binding.myWebviewZoomable.displayHtmlContent(
                     WebViewZoomableClient(),
                     url,
-                    html,
+                    webViewSections,
+                    object : WebViewListener {
+                        override fun onPageLoaded() {
+
+                        }
+                    }
                 )
-            }
-        }
-
-        binding.myWebviewZoomable.addInternalViewTouchListener(
-            listOf(
-                Pair(R.id.button, DefaultWebViewTouchListener()),
-                Pair(R.id.btn_favorite, DefaultWebViewTouchListener())
-            )
-        )
-
-        binding.myWebviewZoomable.getHeaderInternalView()?.let { view ->
-            val mHeader = WebviewHeaderBinding.bind(view)
-            mHeader.button.setOnClickListener {
-                binding.myWebviewZoomable.toggleHideContent {
-
-                }
+                setupWebView(binding, webViewSections)
             }
         }
 
         return binding.root
+    }
+
+    private fun setupWebView(binding: FragmentWebViewZoomBinding, webViewSections: List<WebViewSection>) {
+        binding.myWebviewZoomable.addInternalViewTouchListener(
+            null,
+            WebViewZoomable.NativeSectionType.HEADER,
+            listOf(
+                ViewAndTouchListener(R.id.btn_favorite, DefaultWebViewTouchListener())
+            )
+        )
+        webViewSections.forEach { section ->
+            binding.myWebviewZoomable.addInternalViewTouchListener(
+                section.id,
+                WebViewZoomable.NativeSectionType.HEADER,
+                listOf(
+                    ViewAndTouchListener(R.id.message_container, DefaultWebViewTouchListener()),
+                    ViewAndTouchListener(R.id.recipient_box, DefaultWebViewTouchListener()),
+                    ViewAndTouchListener(R.id.all_mail, DefaultWebViewTouchListener())
+                )
+            )
+
+            binding.myWebviewZoomable.getHeaderView(section.id)?.let { mHeader ->
+                val mHeaderView = WebviewHeaderBinding.bind(mHeader.getInternalView())
+
+                if (section.initialVisibility == SectionVisibility.GONE) {
+                    collapseHeader(mHeaderView, mHeader)
+                } else {
+                    expandHeader(mHeaderView, mHeader)
+                }
+                mHeaderView.messageContainer.setOnClickListener {
+                    if (mHeaderView.snippet.visibility == View.VISIBLE) {
+                        expandHeader(mHeaderView, mHeader)
+                        binding.myWebviewZoomable.setContentVisibility(mHeader.sectionId, true)
+                    } else {
+                        collapseHeader(mHeaderView, mHeader)
+                        binding.myWebviewZoomable.setContentVisibility(mHeader.sectionId, false)
+                    }
+                }
+                mHeaderView.allMail.setOnClickListener {
+                    toggleRecipientBox(mHeaderView, mHeader)
+                }
+                mHeaderView.recipientBox.setOnClickListener {
+                    toggleRecipientBox(mHeaderView, mHeader)
+                }
+            }
+
+            binding.myWebviewZoomable.getFooterView(section.id)?.let { mFooter ->
+                val mHeaderView = WebviewSmallFooterBinding.bind(mFooter.getInternalView())
+                mHeaderView.textView2.text = mFooter.sectionId
+            }
+        }
+    }
+
+    private fun expandHeader(
+        mHeaderView: WebviewHeaderBinding,
+        mHeader: WebViewInjectedView
+    ) {
+        mHeaderView.allMailBox.visibility = View.VISIBLE
+        mHeaderView.recipientBox.visibility = View.VISIBLE
+        mHeaderView.btnReply.visibility = View.VISIBLE
+        mHeaderView.btnOther.visibility = View.VISIBLE
+        mHeaderView.snippet.visibility = View.GONE
+        mHeader.calculateCorrectHeaderHeight()
+    }
+
+    private fun collapseHeader(
+        mHeaderView: WebviewHeaderBinding,
+        mHeader: WebViewInjectedView
+    ) {
+        mHeaderView.allMailBox.visibility = View.GONE
+        mHeaderView.recipientBox.visibility = View.INVISIBLE
+        mHeaderView.btnReply.visibility = View.GONE
+        mHeaderView.btnOther.visibility = View.GONE
+        mHeaderView.snippet.visibility = View.VISIBLE
+        mHeader.calculateCorrectHeaderHeight()
+    }
+
+    private fun toggleRecipientBox(
+        mHeaderView: WebviewHeaderBinding,
+        mHeader: WebViewInjectedView
+    ) {
+        if (mHeaderView.allMail.visibility == View.VISIBLE) {
+            mHeaderView.allMail.visibility = View.GONE
+            mHeaderView.recipientArrow.rotation = 0f
+        } else {
+            mHeaderView.allMail.visibility = View.VISIBLE
+            mHeaderView.recipientArrow.rotation = 180f
+        }
+        mHeader.calculateCorrectHeaderHeight()
     }
 
     companion object {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_weight="1"
+        android:minHeight="48dp"
+        android:text="R: Test Subject, hi how are u"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_favorite"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_weight="0"
+        android:background="@drawable/ripple_background"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minWidth="0dip"
+        android:minHeight="0dip"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:stateListAnimator="@null"
+        app:icon="@drawable/ic_baseline_star_outline_24"
+        app:iconPadding="0dp"
+        app:iconTint="@color/black"
+        app:rippleColor="@null" />
+</LinearLayout>

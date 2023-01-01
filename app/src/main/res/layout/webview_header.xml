@@ -1,70 +1,381 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/message_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/message_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:text="R: Test Subject, hi how are u"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:background="@drawable/ripple_background_rect"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingTop="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="-10dp"
-            android:layout_weight="0"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:minWidth="0dip"
-            android:minHeight="0dip"
-            android:padding="20dp"
-            android:paddingTop="20dp"
-            android:selectAllOnFocus="true"
-            android:stateListAnimator="@null"
-            app:backgroundTint="@android:color/transparent"
-            app:cornerRadius="32dp"
-            app:icon="@drawable/ic_baseline_star_outline_24"
-            app:iconPadding="0dp"
-            app:iconTint="@color/black"
-            app:rippleColor="?attr/colorControlHighlight" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/thumbnail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginBottom="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/compact_info_box"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="wrap">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/img_thumbnail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:background="#3A1111"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_min="48dp"
+                    app:shapeAppearanceOverlay="@style/Theme.WebViewHeaderFooterZoomable.AvatarRoundImage"
+                    app:srcCompat="@drawable/ic_launcher_background" />
+
+                <TextView
+                    android:id="@+id/text_thumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:gravity="center"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
+                    android:text="MR"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_thumbnail"
+                    app:layout_constraintEnd_toEndOf="@+id/img_thumbnail"
+                    app:layout_constraintStart_toStartOf="@+id/img_thumbnail"
+                    app:layout_constraintTop_toTopOf="@+id/img_thumbnail" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/compact_info_box"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                app:layout_constraintEnd_toStartOf="@+id/btn_reply"
+                app:layout_constraintStart_toEndOf="@+id/thumbnail"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/sender_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/sender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="Mario Rossi"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/simple_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="0"
+                        android:text="Yesterday"
+                        android:textColor="@color/gray"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/recipient_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sender_box">
+
+                    <TextView
+                        android:id="@+id/recipient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="40dp"
+                        android:singleLine="true"
+                        android:text="to me"
+                        android:textColor="@color/gray" />
+
+                    <ImageView
+                        android:id="@+id/recipient_arrow"
+                        android:layout_width="22dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:adjustViewBounds="true"
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+                        app:tint="@color/gray" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/snippet"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ex lorem, pulvinar sed bibendum vitae.  "
+                    android:textColor="@color/gray"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/recipient_box"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/sender_box"
+                    app:layout_constraintTop_toTopOf="@+id/recipient_box"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_other"
+                android:layout_width="35dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="0"
+                android:background="@drawable/ripple_background"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dip"
+                android:minHeight="0dip"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:stateListAnimator="@null"
+                app:backgroundTint="@null"
+                app:icon="@drawable/ic_baseline_more_vert_24"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black80"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@null" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_reply"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:background="@drawable/ripple_background"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dip"
+                android:minHeight="0dip"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:stateListAnimator="@null"
+                app:backgroundTint="@null"
+                app:icon="@drawable/ic_baseline_reply_24"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black80"
+                app:layout_constraintEnd_toStartOf="@+id/btn_other"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@null" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/all_mail_box"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TableLayout
+                android:id="@+id/all_mail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/recipient_detail_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TableRow
+                    android:id="@+id/from_list_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="6dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/from_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="0"
+                        android:letterSpacing="0.1"
+                        android:text="From"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/from_all_mail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:text="Mario Rossi &lt;mario.rossi@gmail.com&gt;"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/to_list_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="6dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/to_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="0"
+                        android:letterSpacing="0.1"
+                        android:text="To"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/to_all_mail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:text="Andrea Marrone &lt;andrea.marrone@gmail.it&gt;, Fabio Brembilla &lt;fabio.brembilla@outlook.com&gt;, Marco Bianchi &lt;marco.bianchi@gmail.com&gt;"
+                        android:textAllCaps="false"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/cc_list_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="6dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/cc_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="0"
+                        android:letterSpacing="0.1"
+                        android:text="Cc"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/cc_all_mail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:text="Domenico Benedetti &lt;d.benedetti@live.com&gt;"
+                        android:textAllCaps="false"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/ccn_list_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/ccn_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="0"
+                        android:letterSpacing="0.1"
+                        android:text="Ccn"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/ccn_all_mail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/date_list_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/date_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="0"
+                        android:letterSpacing="0.1"
+                        android:text="Date"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:text="22 Dec 2022, 22:00"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+
+                </TableRow>
+
+            </TableLayout>
+        </RelativeLayout>
+
     </LinearLayout>
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Switch a caso" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Button" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="testo a caso"
-        android:textSize="20sp" />
 
 </LinearLayout>

@@ -12,9 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="horizontal|vertical"
-        app:footer_view="@layout/webview_footer"
-        app:header_view="@layout/webview_header"
-        app:follow_zoom_scale="false">
+        app:footer_view="@layout/webview_global_footer"
+        app:header_view="@layout/webview_global_header">
 
     </it.bonacina.appwebview.ui.webview.WebViewZoomable>
 

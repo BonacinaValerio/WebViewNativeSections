@@ -1,22 +1,24 @@
 package it.bonacina.appwebview.ui.webview
 
+import android.graphics.Bitmap
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import timber.log.Timber
 
 open class WebViewZoomableClient : WebViewClient() {
 
-    private var zoomStatusListener: ZoomStatusListener? = null
+    private var pageListener: PageListener? = null
 
-    open fun setOnZoomStatusChangeListener(onZoomStatusChangeListener: ZoomStatusListener) {
-        this.zoomStatusListener = onZoomStatusChangeListener
+    fun setOnPageListener(onPageListener: PageListener) {
+        this.pageListener = onPageListener
     }
 
-    override fun onScaleChanged(
-        view: WebView?, oldScale: Float,
-        newScale: Float
-    ) {
-        zoomStatusListener?.onZoomStatusChanged(oldScale, newScale)
-        super.onScaleChanged(view, oldScale, newScale)
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+        pageListener?.onPageEvent(PageEvent.ON_PAGE_STARTED)
+    }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+        super.onPageFinished(view, url)
+        pageListener?.onPageEvent(PageEvent.ON_PAGE_STARTED)
     }
 }

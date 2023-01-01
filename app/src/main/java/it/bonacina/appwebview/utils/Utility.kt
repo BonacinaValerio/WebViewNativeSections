@@ -15,6 +15,9 @@ object Utility {
     fun convertPixelsToPx(pixel: Int, scale: Float): Float {
         return pixel/scale
     }
+    fun convertPxToPixels(dp: Float, scale: Float): Double {
+        return dp.toDouble() * scale
+    }
 
     fun isMotionEventInsideView(view: View, event: MotionEvent): Boolean {
         val eventX = event.rawX.toInt()

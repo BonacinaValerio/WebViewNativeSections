@@ -6,7 +6,11 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="black80">#CC000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#888888</color>
 
     <color name="background_viewpager">@color/white</color>
+
+    <color name="ripple_color">#1A000000</color>
 </resources>
