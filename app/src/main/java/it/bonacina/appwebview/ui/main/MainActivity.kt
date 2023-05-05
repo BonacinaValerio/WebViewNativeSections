@@ -2,12 +2,15 @@ package it.bonacina.appwebview.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
 import it.bonacina.appwebview.databinding.MainActivityBinding
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: MainActivityBinding? = null
     private val binding get() = _binding!!
+
+    private var adapter: PagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,14 +24,16 @@ class MainActivity : AppCompatActivity() {
             "https://github.com/BonacinaValerio"
         )
 
-        if (binding.viewpager.adapter == null) {
-            binding.viewpager.adapter =
-                PagerAdapter(supportFragmentManager, lifecycle, webViewUrls)
+        if (adapter == null) {
+            adapter = PagerAdapter(supportFragmentManager, lifecycle, webViewUrls)
+            if (binding.viewpager.adapter !== adapter)
+                binding.viewpager.adapter = adapter
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        adapter = null
         _binding = null
     }
 }

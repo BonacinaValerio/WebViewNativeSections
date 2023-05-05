@@ -1,4 +1,4 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.view.webview
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,12 +13,14 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.RelativeLayout
 import androidx.annotation.LayoutRes
+import androidx.core.view.children
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import it.bonacina.appwebview.R
-import it.bonacina.appwebview.utils.Utility
-import kotlinx.coroutines.*
+import it.bonacina.webviewzoomable.*
+import it.bonacina.webviewzoomable.domain.*
+import it.bonacina.webviewzoomable.utils.Utility
+import it.bonacina.webviewzoomable.view.WebViewInjectedView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import timber.log.Timber
@@ -29,7 +31,7 @@ import kotlin.math.absoluteValue
 import kotlin.properties.Delegates
 
 
-@Suppress("unused", "DEPRECATION")
+@Suppress( "DEPRECATION", "unused")
 class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
 
     enum class NativeSectionType {
@@ -43,6 +45,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
 
     private var lastScale = 0f
     private var currentTouchSlop by Delegates.notNull<Int>()
+    private var currentAttr: AttributeSet? = null
 
     private var listener: WebViewListener? = null
 
@@ -57,15 +60,12 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
     private var sectionsDistanceHtml: Map<String, SectionDistanceHtml> = mapOf()
 
     private var loadHtml: Runnable? = null
-    private var currentUrl: String? = null
     private var currentHtmlText: String? = null
     private var currentSections: MutableList<WebViewSection> = mutableListOf()
     private var sectionsReadyState: MutableMap<String, Boolean> = mutableMapOf()
 
     private var currentDocumentId: String? = null
     private var currentDocumentLoaded: Boolean = false
-
-    private val internalViewsTouchListener: MutableMap<String, NativeSectionViewIdentifier> = mutableMapOf()
 
     internal abstract class ViewHeightListener : OnLayoutChangeListener {
         abstract fun onNewHeight(newHeight: Int)
@@ -117,6 +117,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
     private fun initialSetup(attrs: AttributeSet?) {
         alpha = 0f
         currentTouchSlop = ViewConfiguration.get(context).scaledTouchSlop/2
+        currentAttr = attrs
 
         Timber.d("TouchListener: slop $currentTouchSlop")
 
@@ -194,7 +195,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
             return
 
         val view = View.inflate(context, viewId, null)
-        val myHeaderView = WebViewInjectedView(context)
+        val myHeaderView = WebViewInjectedView(context, NativeSectionType.HEADER)
         myHeaderView.sectionId = sectionId
         myHeaderView.addView(view, LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -211,7 +212,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
     @Synchronized
     fun setGlobalHeader(@LayoutRes viewId: Int) {
         val view = View.inflate(context, viewId, null)
-        val myHeaderView = WebViewInjectedView(context)
+        val myHeaderView = WebViewInjectedView(context, NativeSectionType.HEADER)
         myHeaderView.addView(view, LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -257,7 +258,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
             return
 
         val view = View.inflate(context, viewId, null)
-        val myFooterView = WebViewInjectedView(context)
+        val myFooterView = WebViewInjectedView(context, NativeSectionType.FOOTER)
         myFooterView.sectionId = sectionId
         myFooterView.addView(view, LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -274,7 +275,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
     @Synchronized
     fun setGlobalFooter(@LayoutRes viewId: Int) {
         val view = View.inflate(context, viewId, null)
-        val myFooterView = WebViewInjectedView(context)
+        val myFooterView = WebViewInjectedView(context, NativeSectionType.FOOTER)
         myFooterView.addView(view, LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -351,8 +352,13 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
             script
         ) { returnValue ->
             refreshSectionsHtml()
-            if (returnValue != "null")
+            if (returnValue != "null") {
+                currentSections.find { it.id == sectionId }?.visibility = if (!returnValue.toBoolean())
+                    SectionVisibility.VISIBLE
+                else
+                    SectionVisibility.GONE
                 onChangeContentVisibility(!returnValue.toBoolean())
+            }
         }
     }
 
@@ -382,8 +388,13 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
             script
         ) { returnValue ->
             refreshSectionsHtml()
-            if (returnValue != "null")
+            if (returnValue != "null") {
+                currentSections.find { it.id == sectionId }?.visibility = if (!returnValue.toBoolean())
+                    SectionVisibility.VISIBLE
+                else
+                    SectionVisibility.GONE
                 onChangeContentVisibility(!returnValue.toBoolean())
+            }
         }
     }
 
@@ -412,7 +423,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         refreshSectionsHtml()
     }
 
-    private fun refreshSectionsHtml(checkShowPage: Boolean = false) {
+    private fun refreshSectionsHtml(checkShowPage: Boolean = false, onDone: () -> Unit = {}) {
         val sections = currentSections.joinToString(prefix = "[", postfix = "]") { "'${it.id}'" }
         evaluateJavascript("""
             (function() {
@@ -470,24 +481,25 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
                 sectionsDistanceHtml = obj.sectionHeight
                 refreshNativeViews(checkShowPage)
             }
+
+            onDone()
         }
     }
 
     fun displayHtmlContent(
         webViewClient: WebViewZoomableClient,
-        url: String,
         sections: List<WebViewSection>,
         listener: WebViewListener? = null
     ) {
         setWebViewClient(webViewClient)
         webViewClient.setOnPageListener(this)
         this.listener = listener
-        setHtmlContent(url, sections)
+        setHtmlContent(sections)
     }
 
     private fun setHtmlContent(
-        url: String,
-        sections: List<WebViewSection>
+        sections: List<WebViewSection>,
+        loadHtmlContent: Boolean = true
     ) {
         synchronized(this) {
             alpha = 0f
@@ -499,33 +511,29 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
                     setFooter(section.footerLayoutId, section.id)
             }
             injectSectionToHtml(
-                url,
                 sections
             )
-            loadHtml = Runnable {
-                enableZoom(false)
-                loadDataWithBaseURL(
-                    currentUrl,
-                    currentHtmlText ?: "",
-                    "text/html",
-                    "utf-8",
-                    null
-                )
-                resumeTimers()
+            if (loadHtmlContent) {
+                loadHtml = Runnable {
+                    enableZoom(false)
+                    loadDataWithBaseURL(
+                        null,
+                        currentHtmlText ?: "",
+                        "text/html",
+                        "utf-8",
+                        null
+                    )
+                    resumeTimers()
+                }
+                post(loadHtml)
             }
-            post(loadHtml)
         }
     }
 
-    private fun addAdditionalHtmlHeader(
+    fun addAdditionalHtmlHeader(
         headerSection: WebViewSection
     ) {
         synchronized(this) {
-            val realUrl = currentUrl
-            requireNotNull(realUrl) {
-                "url is null"
-            }
-
             if (currentSections.find { it.id == headerSection.id } != null)
                 return
 
@@ -537,7 +545,6 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
                 setFooter(headerSection.footerLayoutId, headerSection.id)
 
             injectSectionToHtml(
-                realUrl,
                 currentSections
             )
 
@@ -557,7 +564,6 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
     }
 
     private fun injectSectionToHtml(
-        url: String,
         sections: List<WebViewSection>
     ): String {
         val document = Jsoup.parse(baseHtmlContent)
@@ -565,7 +571,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         sections.forEach { section ->
             val sectionId = section.id
             val sectionHtml = section.htmlText
-            val iframe = createIframeSection(sectionHtml, sectionId, section.initialVisibility)
+            val iframe = createIframeSection(sectionHtml, section.url, sectionId)
             addPaddingToElement(
                 iframe.getElementsByClass("header")[0],
                 getHeaderHeight(sectionId),
@@ -600,7 +606,6 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
             it.id to false
         }
         currentDocumentLoaded = false
-        currentUrl = url
         currentHtmlText = document.toString()
         currentSections = sections.toMutableList()
         return document.toString()
@@ -623,7 +628,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         element.attr("style", "$currentStyle $paddingCss")
     }
 
-    private fun injectPaddingHeader(
+    fun injectPaddingHeader(
         paddingPx: Int,
         sectionId: String?
     ) {
@@ -653,7 +658,7 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         )
     }
 
-    private fun injectPaddingFooter(
+    fun injectPaddingFooter(
         paddingPx: Int,
         sectionId: String?
     ) {
@@ -686,8 +691,39 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         )
     }
 
-    override fun onPageEvent(pageEvent: PageEvent) {
-        refreshSectionsHtml()
+    override fun onPageEvent(pageEvent: PageEvent, data: String?) {
+        when(pageEvent) {
+            PageEvent.ON_PAGE_LOADED -> {
+                if (!canGoBack())
+                    refreshSectionsHtml()
+                else
+                    alpha = 1f
+            }
+            PageEvent.ON_REDIRECT -> {
+                if (data != null) {
+                    alpha = 0f
+                    refreshHtmlFromJavascript(false) {
+                        children.forEach {
+                            it.visibility = View.GONE
+                        }
+                        loadUrl(data)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun goBack() {
+        if (!canGoBackOrForward(-2))
+            restoreViews()
+        super.goBack()
+    }
+
+    private fun restoreViews() {
+        alpha = 0f
+        children.forEach {
+            it.visibility = View.VISIBLE
+        }
     }
 
     private fun refreshNativeViews(checkShowPage: Boolean = false) {
@@ -805,7 +841,6 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        Timber.d("TouchListener: webview onTouchEvent")
         handleMotionEvent(event)
         return super.onTouchEvent(event)
     }
@@ -1072,8 +1107,8 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
 
     private fun createIframeSection(
         htmlContent: String,
-        sectionId: String,
-        initialVisibility: SectionVisibility
+        urlContent: String?,
+        sectionId: String
     ): Element {
         val iFrameContainer = Element("div")
         iFrameContainer.id(sectionId)
@@ -1088,9 +1123,22 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         iframeElement.attr("scrolling", "no")
         iframeElement.attr(
             "onload",
-            "javascript:resizeIframe(this, ${initialVisibility == SectionVisibility.VISIBLE});"
+            "javascript:resizeIframe(this, Android.getCurrentSectionVisibility(\'$sectionId\'));"
         )
-        iframeElement.attr("srcdoc", htmlContent)
+
+        val contentDoc = Jsoup.parse(htmlContent)
+        val baseElement = if (urlContent == null)
+            contentDoc.head()
+                .appendElement("base")
+                .attr("href", "about:blank")
+        else
+            contentDoc.head()
+                .appendElement("base")
+                .attr("href", urlContent)
+
+        baseElement.attr("target", "_parent")
+
+        iframeElement.attr("srcdoc", contentDoc.toString())
         iFrameContainer.appendChild(iframeElement)
 
         val footerElement = Element("div")
@@ -1098,6 +1146,13 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         iFrameContainer.appendChild(footerElement)
 
         return iFrameContainer
+    }
+
+    @JavascriptInterface
+    fun getCurrentSectionVisibility(sectionId: String): Boolean {
+        return synchronized(this) {
+            (currentSections.find { it.id == sectionId }?.visibility) == SectionVisibility.VISIBLE
+        }
     }
 
     @JavascriptInterface
@@ -1144,12 +1199,12 @@ class WebViewZoomable: WebView, PageListener, View.OnLayoutChangeListener {
         }
     }
 
-    private fun refreshHtmlFromJavascript(checkShowPage: Boolean) {
+    private fun refreshHtmlFromJavascript(checkShowPage: Boolean, onDone: () -> Unit = {}) {
         settings.loadWithOverviewMode = false
         settings.loadWithOverviewMode = true
         setInitialScale(0)
         lastScale = scale
-        refreshSectionsHtml(checkShowPage)
+        refreshSectionsHtml(checkShowPage, onDone)
     }
 
     companion object {

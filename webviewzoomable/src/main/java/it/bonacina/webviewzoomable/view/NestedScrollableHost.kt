@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.view
 
 import android.content.Context
 import android.util.AttributeSet

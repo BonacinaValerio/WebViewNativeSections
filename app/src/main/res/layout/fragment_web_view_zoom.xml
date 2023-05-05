@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".ui.webviewfragment.WebViewZoomFragment">
 
-    <it.bonacina.appwebview.ui.webview.WebViewZoomable
+    <it.bonacina.webviewzoomable.view.webview.WebViewZoomable
         android:id="@+id/my_webview_zoomable"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,6 +15,6 @@
         app:footer_view="@layout/webview_global_footer"
         app:header_view="@layout/webview_global_header">
 
-    </it.bonacina.appwebview.ui.webview.WebViewZoomable>
+    </it.bonacina.webviewzoomable.view.webview.WebViewZoomable>
 
 </LinearLayout>

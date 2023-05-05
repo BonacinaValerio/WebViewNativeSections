@@ -1,10 +1,10 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.view.webview
 
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import it.bonacina.appwebview.utils.Utility.isMotionEventInsideView
+import it.bonacina.webviewzoomable.utils.Utility.isMotionEventInsideView
 import timber.log.Timber
 import kotlin.math.absoluteValue
 

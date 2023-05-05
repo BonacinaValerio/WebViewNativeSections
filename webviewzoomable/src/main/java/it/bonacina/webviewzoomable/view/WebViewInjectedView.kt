@@ -1,4 +1,4 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.view
 
 import android.content.Context
 import android.os.Parcel
@@ -9,12 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import it.bonacina.webviewzoomable.view.webview.WebViewZoomable
 import timber.log.Timber
 import java.util.*
 
 class WebViewInjectedView : RelativeLayout {
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context, sectionType: WebViewZoomable.NativeSectionType) : super(context) {
+        this.sectionType = sectionType
+    }
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
@@ -28,6 +31,7 @@ class WebViewInjectedView : RelativeLayout {
     }
 
     var sectionId: String
+    var sectionType: WebViewZoomable.NativeSectionType? = null
 
     companion object {
         private class SavedState : BaseSavedState {
@@ -78,13 +82,13 @@ class WebViewInjectedView : RelativeLayout {
         }
     }
 
-    fun calculateCorrectHeaderHeight() {
+    fun calculateCorrectHeaderHeight(onDone: () -> Unit = {}) {
         val setCorrectHeightRunnable = Runnable {
             try {
                 val lp: ViewGroup.LayoutParams = layoutParams
                 lp.height = LinearLayout.LayoutParams.WRAP_CONTENT
                 layoutParams = lp
-                setCorrectHeaderHeight()
+                setCorrectHeaderHeight(onDone)
             } catch (ignored: Exception) { }
         }
         try {
@@ -92,7 +96,7 @@ class WebViewInjectedView : RelativeLayout {
         } catch (ignored: Exception) { }
     }
 
-    private fun setCorrectHeaderHeight() {
+    private fun setCorrectHeaderHeight(onDone: () -> Unit = {}) {
         val forceCorrectHeightRunnable = Runnable {
             try {
                 measure(
@@ -106,6 +110,18 @@ class WebViewInjectedView : RelativeLayout {
                     lp.height = targetHeight
                     layoutParams = lp
                     requestLayout()
+                    val webViewParent = parent
+                    if (webViewParent is WebViewZoomable) {
+                        when (sectionType) {
+                            WebViewZoomable.NativeSectionType.HEADER ->
+                                webViewParent.injectPaddingHeader(targetHeight, sectionId)
+                            WebViewZoomable.NativeSectionType.FOOTER -> {
+                                webViewParent.injectPaddingFooter(targetHeight, sectionId)
+                            }
+                            else -> { }
+                        }
+                        onDone()
+                    }
                 }
             } catch (ignored: Exception) { }
         }

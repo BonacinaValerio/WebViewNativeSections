@@ -1,4 +1,4 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.domain
 
 data class SectionDistanceHtmlAndDocId(
     val sectionHeight: Map<String, SectionDistanceHtml>,

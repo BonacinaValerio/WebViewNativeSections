@@ -1,7 +1,8 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.domain
 
 import android.view.View
 import androidx.annotation.IdRes
+import it.bonacina.webviewzoomable.view.webview.WebViewZoomable
 
 data class NativeSectionViewIdentifier(
     val sectionId: String,

@@ -1,4 +1,4 @@
-package it.bonacina.appwebview.ui.webview
+package it.bonacina.webviewzoomable.view.webview
 
 interface WebViewListener {
     fun onPageLoaded()

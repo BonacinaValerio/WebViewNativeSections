@@ -1,4 +1,4 @@
-package it.bonacina.appwebview.utils
+package it.bonacina.webviewzoomable.utils
 
 import android.content.res.Resources
 import android.graphics.Rect
@@ -7,10 +7,6 @@ import android.view.MotionEvent
 import android.view.View
 
 object Utility {
-
-    fun toPx(dp: Int, resources: Resources): Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics).toInt()
-    }
 
     fun convertPixelsToPx(pixel: Int, scale: Float): Float {
         return pixel/scale
