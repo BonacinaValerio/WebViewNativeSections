@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val webViewUrls = listOf(
-            "https://github.com/BonacinaValerio",
-            "https://github.com/BonacinaValerio",
-            "https://github.com/BonacinaValerio"
+            "https://example.com/",
+            null,
+            "https://example.com/",
         )
 
         if (adapter == null) {

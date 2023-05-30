@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.WebViewHeaderFooterZoomable" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.WebViewNativeSections" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -19,7 +19,7 @@
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 
-    <style name="Theme.WebViewHeaderFooterZoomable.AvatarRoundImage">
+    <style name="Theme.WebViewNativeSections.AvatarRoundImage">
         <item name="cornerSize">50%</item>
     </style>
 </resources>

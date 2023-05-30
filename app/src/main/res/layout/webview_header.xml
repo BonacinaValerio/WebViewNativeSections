@@ -51,7 +51,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_min="48dp"
-                    app:shapeAppearanceOverlay="@style/Theme.WebViewHeaderFooterZoomable.AvatarRoundImage"
+                    app:shapeAppearanceOverlay="@style/Theme.WebViewNativeSections.AvatarRoundImage"
                     app:srcCompat="@drawable/ic_launcher_background" />
 
                 <TextView

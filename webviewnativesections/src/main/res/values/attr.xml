@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WebViewNativeSections">
+        <attr name="global_header_view" format="reference" />
+        <attr name="global_footer_view" format="reference" />
+    </declare-styleable>
+
+</resources>

@@ -4,12 +4,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import it.bonacina.appwebview.ui.webviewfragment.WebViewZoomFragment
+import it.bonacina.appwebview.ui.webviewfragment.WebViewNativeSectionsFragment
 
 class PagerAdapter(
     fm: FragmentManager,
     lc: Lifecycle,
-    var urls: List<String>
+    var urls: List<String?>
 ) : FragmentStateAdapter(fm, lc) {
 
     override fun getItemCount(): Int {
@@ -17,7 +17,7 @@ class PagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        return WebViewZoomFragment.newInstance(urls[position])
+        return WebViewNativeSectionsFragment.newInstance(urls[position])
     }
 
 }

@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "WebViewHeaderFooterZoomable"
+rootProject.name = "WebViewNativeSections"
 include ':app'
-include ':webviewzoomable'
+include ':webviewnativesections'
