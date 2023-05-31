@@ -14,6 +14,8 @@ WebViewNativeSections is a custom Android library that provides an advanced WebV
 > without compromising the zoom experience even when the WebView is
 > integrated into a complex interface like a ViewPager2.
 
+<img src="art/preview_1.gif" width="260"><img src="art/preview_2.gif" width="260"><img src="art/preview_3.gif" width="260">
+
 ## System Requirements
 - Android SDK 21+ (Android 5.0 Lollipop or later).
 
