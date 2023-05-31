@@ -33,7 +33,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'it.bonacina:webviewnativesections:1.0.0'
+    implementation 'io.github.bonacinavalerio:WebViewNativeSections:0.1'
 }
 ```
 

@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 1
-        versionName "1.0.0"
+        versionName "0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -45,3 +45,11 @@ dependencies {
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     testImplementation 'junit:junit:4.12'
 }
+
+ext {
+    PUBLISH_GROUP_ID = 'io.github.bonacinavalerio'
+    PUBLISH_VERSION = '0.1'
+    PUBLISH_ARTIFACT_ID = 'WebViewNativeSections'
+}
+
+apply from: 'publish-remote.gradle'
