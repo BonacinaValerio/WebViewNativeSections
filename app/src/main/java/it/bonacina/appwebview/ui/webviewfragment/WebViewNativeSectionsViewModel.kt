@@ -47,7 +47,7 @@ class WebViewNativeSectionsViewModel: ViewModel() {
                         WebViewSection(
                             """
                                 <html>
-                                LALAALALALALALALALALALA
+                                Awesome Section with image &#128512; &#128516; &#128525; &#128151; &#128640;<img width="250" src="https://media.tenor.com/pXVD0uOHIncAAAAC/rocket-flying.gif" />
                                 </html>
                             """.trimIndent(),
                             headerLayoutId = R.layout.webview_header,
@@ -58,7 +58,7 @@ class WebViewNativeSectionsViewModel: ViewModel() {
                         WebViewSection(
                             """
                                     <html>
-                                    ULTIMA SEZIONE
+                                    Last section with link &#128279;
                                     <a href="http://www.google.com">test</a>
                                     </html>
                                 """.trimIndent(),

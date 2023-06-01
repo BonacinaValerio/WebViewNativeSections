@@ -52,7 +52,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintWidth_min="48dp"
                     app:shapeAppearanceOverlay="@style/Theme.WebViewNativeSections.AvatarRoundImage"
-                    app:srcCompat="@drawable/ic_launcher_background" />
+                    app:srcCompat="@color/teal_700" />
 
                 <TextView
                     android:id="@+id/text_thumbnail"
