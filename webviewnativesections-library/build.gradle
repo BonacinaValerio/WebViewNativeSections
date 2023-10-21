@@ -59,7 +59,7 @@ dependencies {
     implementation "org.jsoup:jsoup:1.15.4"
     implementation 'androidx.test:monitor:1.6.1'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 ext {

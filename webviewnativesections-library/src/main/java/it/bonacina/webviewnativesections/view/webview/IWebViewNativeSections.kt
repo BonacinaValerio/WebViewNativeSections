@@ -99,7 +99,7 @@ interface IWebViewNativeSections {
     /**
      * Adds internal view touch listeners to a specific section in the WebView.
      *
-     * @param sectionId The ID of the section.
+     * @param sectionId The ID of the section or null for global sections.
      * @param type The type of the native section.
      * @param viewsAndListeners The list of [ViewAndTouchListener] representing the views and touch listeners.
      */
