@@ -64,7 +64,7 @@ dependencies {
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.bonacinavalerio'
-    PUBLISH_VERSION = '0.1'
+    PUBLISH_VERSION = '1.0'
     PUBLISH_ARTIFACT_ID = 'WebViewNativeSections'
 }
 
