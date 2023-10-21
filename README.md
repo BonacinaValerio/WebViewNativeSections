@@ -35,7 +35,7 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation 'io.github.bonacinavalerio:WebViewNativeSections:0.1'
+    implementation 'io.github.bonacinavalerio:WebViewNativeSections:1.0'
 }
 ```
 
@@ -186,7 +186,6 @@ val viewsAndListeners = listOf(
 )
 webViewNativeSections.addInternalViewTouchListener(sectionId, type, viewsAndListeners)
 ```
-Here's the updated "Loading and Displaying HTML Content" section, including the explanation of the `WebViewSection` object and its additional properties:
 
 ### Loading and Displaying HTML Content
 
